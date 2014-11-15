@@ -11,7 +11,7 @@ enum PortType {NOPORT, COMMON, BRICK, LUMBER, ORE, WOOL, GRAIN};
 class Vertex
 {
 public:
-  
+  Vertex();
   int owner_id;
   PortType port_type;
   int id;
@@ -20,19 +20,21 @@ public:
 class Edge
 {
 public:
-  int vertex1_id;
-  int vertex2_id;
-  int owner_id;
-  int id;
+    Edge();
+    int a_id;
+    int b_id;
+    int owner_id;
+    int id;
 };
 
 class Face
 {
 public:
-  std::vector<Vertex *> vertices;
-  CellType resource;
-  int face_number;
-  int id;
+    Face();
+    std::vector<Vertex *> vertices;
+    CellType resource;
+    int face_number;
+    int id;
 };
 
 class GameBoard
@@ -49,6 +51,6 @@ public:
 private:
     bool CreateSymmetrical(std::vector<int> & row_length);
 };
-
+};
 
 #endif // objects_H

@@ -1,10 +1,9 @@
 #include <QtGui/QApplication>
-
-
+#include "settlers.h"
+#include <iostream>
 
 int main(int argc, char** argv)
 {
-
-  
-  return 0;
-};
+ 
+    return 0;
+}

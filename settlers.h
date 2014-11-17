@@ -1,13 +1,15 @@
+#ifndef settlers_H
+#define settlers_H
 #include "objects.h"
 #include <QObject>
 
 namespace settlers 
 {
-class GameState //: public QObject
+class GameState : public QObject
 {
-    //Q_OBJECT
+    Q_OBJECT
 public:
-    GameState() {};
+    GameState();
     ~GameState() {};
     GameBoard m_board;
     GameSettings m_settings;
@@ -16,4 +18,6 @@ public:
     std::vector<Player> m_players;
     
 };
+
 };
+#endif //settlers_H

@@ -5,7 +5,7 @@
 
 namespace settlers{
 enum GameResource {BRICK = 0, LUMBER, ORE, WOOL, GRAIN, RESOURCES_NUMBER, NONE};
-enum CellType {DESERTS, MOUNTAINS, FORESTS, HILLS, PASTURES, FIELDS};
+enum CellType {DESERTS, MOUNTAINS, FORESTS, HILLS, PASTURES, FIELDS, CELL_TYPES_NUMBER};
 enum PortType {PORT_NOPORT, PORT_COMMON, PORT_BRICK, PORT_LUMBER, PORT_ORE, PORT_WOOL, PORT_GRAIN};
 
 class DevelopmentCards
@@ -64,10 +64,11 @@ public:
     void Clear();
     void CreateStandard();
     ~GameBoard() {};
-    
+
     std::vector<Vertex> m_vertices;
     std::vector<Edge> m_edges;
     std::vector<Face> m_cells;
+    std::vector<int> m_row_length;
 private:
     bool CreateSymmetrical(std::vector<int> & row_length);
     std::vector<int> m_spin_map;

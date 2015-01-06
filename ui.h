@@ -11,23 +11,28 @@
 
 namespace settlers 
 {
-    const std::vector<QColor> kCellColors = {Qt::darkRed, Qt::darkGreen, Qt::gray, Qt::green, Qt::cyan, Qt::black, Qt::darkYellow};
+const std::vector<QColor> kCellColors = {Qt::darkRed, Qt::darkGreen, Qt::gray, Qt::green, Qt::cyan, Qt::black, Qt::darkYellow};
+class GameWindow;
 
 class BoardHex : public QGraphicsPolygonItem
 {
 public:
-    BoardHex(Face * cell, QGraphicsItem * parent = 0) : QGraphicsPolygonItem (parent), m_cell(cell) { };
-    BoardHex(Face * cell, const QPolygonF &polygon, QGraphicsItem *parent = 0) : QGraphicsPolygonItem(polygon, parent), m_cell(cell) { };
+    BoardHex(Face * cell, GameWindow * game_window, QGraphicsItem * parent = 0)
+            : QGraphicsPolygonItem (parent), m_cell(cell), m_game_window(game_window) { };
+    BoardHex(Face * cell, const QPolygonF &polygon, GameWindow * game_window, QGraphicsItem *parent = 0)
+            : QGraphicsPolygonItem(polygon, parent), m_cell(cell), m_game_window(game_window) { };
     void updatecolor(){
         setBrush(QBrush(kCellColors[m_cell->resource]));
     };
     Face * m_cell;
+    GameWindow * m_game_window;
 protected:
     void mouseReleaseEvent (QGraphicsSceneMouseEvent * event) {
         //event->accept();
         setBrush(QBrush(Qt::darkYellow));
         //QGraphicsPolygonItem::mouseReleaseEvent(event);
     };
+    void MouseDoubleClickEvent (QGraphicsSceneMouseEvent * event);
     void mousePressEvent (QGraphicsSceneMouseEvent * event) {
 
     };
@@ -38,18 +43,22 @@ private:
 class BoardVertex : public QGraphicsEllipseItem
 {
 public:
-    BoardVertex(Vertex * vert, QGraphicsItem * parent = 0) : QGraphicsEllipseItem (parent), m_vertex(vert) { };
-    BoardVertex(Vertex * vert, double rad, QGraphicsItem *parent = 0) : QGraphicsEllipseItem(-rad,-rad,2*rad,2*rad, parent), m_vertex(vert) { };
+    BoardVertex(Vertex * vert,GameWindow * game_window,  QGraphicsItem * parent = 0) 
+            : QGraphicsEllipseItem (parent), m_vertex(vert), m_game_window(game_window) { };
+    BoardVertex(Vertex * vert, double rad, GameWindow * game_window, QGraphicsItem *parent = 0)
+            : QGraphicsEllipseItem(-rad,-rad,2*rad,2*rad, parent), m_vertex(vert), m_game_window(game_window) { };
     void updatecolor(){
         setBrush(QBrush(Qt::lightGray));
     };
     Vertex * m_vertex;
+    GameWindow * m_game_window;
 protected:
     void mouseReleaseEvent (QGraphicsSceneMouseEvent * event) {
         //event->accept();
         setBrush(QBrush(Qt::darkYellow));
         //QGraphicsPolygonItem::mouseReleaseEvent(event);
     };
+    void MouseDoubleClickEvent (QGraphicsSceneMouseEvent * event);
     void mousePressEvent (QGraphicsSceneMouseEvent * event) {
         
     };
@@ -60,27 +69,45 @@ private:
 class BoardEdge : public QGraphicsLineItem
 {
 public:
-    BoardEdge(Edge * edge, QGraphicsItem * parent = 0) : QGraphicsLineItem (parent), m_edge(edge) { };
-    BoardEdge(Edge * edge, double x1, double y1, double x2, double y2, QGraphicsItem *parent = 0)
-            : QGraphicsLineItem(x1,y1,x2,y2, parent), m_edge(edge) { };
+    BoardEdge(Edge * edge, GameWindow * game_window, QGraphicsItem * parent = 0)
+            : QGraphicsLineItem (parent), m_edge(edge), m_game_window(game_window) { };
+    BoardEdge(Edge * edge, double x1, double y1, double x2, double y2, GameWindow * game_window, QGraphicsItem *parent = 0)
+            : QGraphicsLineItem(x1,y1,x2,y2, parent), m_edge(edge), m_game_window(game_window) { };
     /*void updatecolor(){
         setBrush(QBrush(Qt::lightGray));
     };*/
     Edge * m_edge;
+    GameWindow * m_game_window;
 protected:
-    void mouseReleaseEvent (QGraphicsSceneMouseEvent * event) {
-        //event->accept();
+    void mouseReleaseEvent (QGraphicsSceneMouseEvent * event) ;/*{
+        event->accept();
         setPen(QPen(QBrush(Qt::darkYellow), 20));
-        //QGraphicsPolygonItem::mouseReleaseEvent(event);
-    };
+       // QGraphicsPolygonItem::mouseReleaseEvent(event);
+    };*/
+    void MouseDoubleClickEvent (QGraphicsSceneMouseEvent * event);
     void mousePressEvent (QGraphicsSceneMouseEvent * event) {
-        
+        event->accept();
     };
 private:
     
 };
     
-class GameWindow : public QGraphicsView//QObject
+class GameBoardView : public QGraphicsView
+{
+  Q_OBJECT
+public:
+    GameBoardView(QWidget* parent = 0) : QGraphicsView(parent) { };
+    QGraphicsScene * m_scene;
+    QSize m_default_board_size;
+protected:
+    void resizeEvent(QResizeEvent *event);
+    QSize sizeHint () const;
+    int heightForWidth(int w) const;
+private:
+
+};
+
+class GameWindow : public QWidget//QGraphicsView//QObject
 {
   Q_OBJECT
 public:
@@ -101,10 +128,14 @@ public:
         mbox.exec();
         //QGraphicsView::mouseReleaseEvent(event);
     };*/
-private:
+    int m_player_id;
     GameState * m_game;
+protected:
+   /* void resizeEvent(QResizeEvent *event);
+    int heightForWidth(int w) const;*/
+private:
     QGraphicsScene * m_scene;
-    QGraphicsView * m_view;
+    GameBoardView * m_game_board_view;
     std::vector<BoardHex*> m_cells;
     std::vector<BoardEdge*> m_edges;
     std::vector<BoardVertex*> m_vertices;

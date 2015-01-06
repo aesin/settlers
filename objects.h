@@ -2,11 +2,14 @@
 #define objects_H
 
 #include <vector>
+#include <string>
+#include <QColor>
 
 namespace settlers{
 enum GameResource {BRICK = 0, LUMBER, ORE, WOOL, GRAIN, RESOURCES_NUMBER, NONE};
 enum CellType {DESERTS, MOUNTAINS, FORESTS, HILLS, PASTURES, FIELDS, CELL_TYPES_NUMBER};
 enum PortType {PORT_NOPORT, PORT_COMMON, PORT_BRICK, PORT_LUMBER, PORT_ORE, PORT_WOOL, PORT_GRAIN};
+enum Urbanization {NOTHING, VILLAGE, CITY};
 
 class DevelopmentCards
 {
@@ -17,16 +20,30 @@ class DevelopmentCards
     int victory_point;
 };
 
+class Resources{
+public:
+    Resources(): m_resources(RESOURCES_NUMBER, 0) {};
+    int& operator[] (int x) {return m_resources[x];}
+private:
+    std::vector<int> m_resources;
+};
+
 class Player
 {
 public:
-    Player(): m_resources(RESOURCES_NUMBER, 0) {};
-    int player_id;
+    Player() {};
+    int m_player_id;
+    std::string m_player_name;
+    QColor m_color;
     std::vector<int> m_cities_id;
     std::vector<int> m_roads_id;
     DevelopmentCards m_dev_cards;
-    std::vector<int> m_resources;
+    Resources m_resources;
+    int points;
 };
+class Vertex;
+class Edge;
+class Face;
 
 class Vertex
 {
@@ -34,7 +51,16 @@ public:
   Vertex();
   int owner_id;
   PortType port_type;
+  Urbanization m_urban;
   int id;
+  
+  class RoadTo{
+  public:
+      RoadTo(Vertex& vert, Edge& edge): dest(vert), road(edge) {};
+      Vertex & dest;
+      Edge & road;
+  };
+  std::vector<RoadTo> neighbours;
 };
 
 class Edge

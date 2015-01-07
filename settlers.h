@@ -5,7 +5,7 @@
 
 namespace settlers 
 {
-enum GamePhase {PRE_GAME, STARTING_VILLAGE, PRE_ROLL, ROBBER, MAIN_PHASE, CONFIRMATION, PHASES_NUM};
+enum GamePhase {PRE_GAME, STARTING_VILLAGE, PRE_ROLL, ROBBER, MAIN_PHASE, CONFIRMATION, NETWORK_CONNECTION, PHASES_NUM};
 const int BANK = -1;
 
 class GameState : public QObject
@@ -13,14 +13,14 @@ class GameState : public QObject
     Q_OBJECT
 public:
     GameState();
-    ~GameState() {};
+    ~GameState() {}
 
     bool ResTrade(int id1, int id2, Resources * res1, Resources * res2 = nullptr);
-    bool TryBuildRoad(int player, Edge & road, std::string & result);
+    bool TryBuildRoad(int player, Edge & road, QString & result);
     void BuildRoad(int player, Edge & road);
-    bool TryBuildVillage(int player, Vertex & place, std::string & result);
+    bool TryBuildVillage(int player, Vertex & place, QString & result);
     void BuildVillage(int player, Vertex & place);
-    bool TryBuildCity(int player, Vertex & place, std::string & result);
+    bool TryBuildCity(int player, Vertex & place, QString & result);
     void BuildCity(int player, Vertex & place);
 
     GameBoard m_board;
@@ -33,5 +33,5 @@ private:
 
 };
 
-};
+}
 #endif //settlers_H

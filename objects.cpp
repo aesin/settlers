@@ -1,4 +1,6 @@
 #include "objects.h"
+#include <cstdlib>
+#include <random>
 
 namespace settlers{
     
@@ -115,7 +117,7 @@ void GameBoard::CreateStandard()
     std::vector<int> standard_size(standard, standard + 7);
     CreateSymmetrical(standard_size);
     m_spin_map = std::vector<int>(standard_spin, standard_spin + 19);
-    int random_motion_seed = 0;//TODO: make it random
+    int random_motion_seed = std::rand() % 12; // 12?
     int random_motion[19];
     for(int i = 0; i < 19; i++) random_motion[i] = i;
     if(random_motion_seed % 2) for(int i = 0; i < 19; i++) random_motion[i] = standard_symmetry[random_motion[i]];
@@ -127,6 +129,9 @@ void GameBoard::CreateStandard()
     std::vector<int> board_sides;
     for(int i = 0; i < 6; i++) board_sides.push_back(i);
     //TODO: make it random
+    std::random_device rnd_device;
+    std::mt19937 rnd_gen(rnd_device());
+    std::shuffle(board_sides.begin(), board_sides.end(), rnd_gen);
     PortType single_port[] = {PORT_ORE, PORT_COMMON, PORT_LUMBER};
     PortType double_port[] = {PORT_WOOL, PORT_BRICK, PORT_GRAIN};
     for(int i = 0; i < 6; i++){
@@ -150,10 +155,10 @@ void GameBoard::CreateStandard()
     for(int i=0; i<4; i++) standard_recources.push_back(GRAIN);
     for(int i=0; i<3; i++) standard_recources.push_back(BRICK);
     for(int i=0; i<3; i++) standard_recources.push_back(ORE);
-    //TODO: shuffle
+    std::shuffle(standard_recources.begin(), standard_recources.end(), rnd_gen);
     for(int i=0; i<9; i++) m_cells[i].resource = standard_recources[i];
     m_cells[9].resource = NONE;
     for(int i=10; i<19; i++) m_cells[i].resource = standard_recources[i-1];
 }
 
-};
+}

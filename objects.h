@@ -22,7 +22,7 @@ class DevelopmentCards
 
 class Resources{
 public:
-    Resources(): m_resources(RESOURCES_NUMBER, 0) {};
+    Resources(): m_resources(RESOURCES_NUMBER, 0) {}
     int& operator[] (int x) {return m_resources[x];}
 private:
     std::vector<int> m_resources;
@@ -31,7 +31,7 @@ private:
 class Player
 {
 public:
-    Player() {};
+    Player() {}
     int m_player_id;
     std::string m_player_name;
     QColor m_color;
@@ -56,7 +56,7 @@ public:
   
   class RoadTo{
   public:
-      RoadTo(Vertex& vert, Edge& edge): dest(vert), road(edge) {};
+      RoadTo(Vertex& vert, Edge& edge): dest(vert), road(edge) {}
       Vertex & dest;
       Edge & road;
   };
@@ -86,10 +86,10 @@ public:
 class GameBoard
 {
 public:
-    GameBoard() {};
+    GameBoard() {}
     void Clear();
     void CreateStandard();
-    ~GameBoard() {};
+    ~GameBoard() {}
 
     std::vector<Vertex> m_vertices;
     std::vector<Edge> m_edges;
@@ -107,6 +107,6 @@ public:
 };
 
 
-};
+}
 
 #endif // objects_H

@@ -111,27 +111,90 @@ void GameWindow::Init()
     m_layout->addWidget(m_button);
     setLayout(m_layout);
     show();
+    m_player_id = 1;
 }
 
-void BoardEdge::MouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
+void BoardEdge::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
 {
-    m_game_window->m_game->BuildRoad(m_game_window->m_player_id, *m_edge);
+    if(m_edge->owner_id == -1) {
+        QString result;
+        if (m_game_window->m_game->TryBuildRoad(m_game_window->m_player_id, *m_edge, result)) {
+            QMessageBox confirm;
+            //confirm.setText("Build road here?");
+            QPushButton * conf = confirm.addButton("Yay!", QMessageBox::ActionRole);
+            QPushButton * rej = confirm.addButton(QMessageBox::Abort);
+            confirm.exec();
+            if(confirm.clickedButton() == conf) {
+                m_game_window->m_game->BuildRoad(m_game_window->m_player_id, *m_edge);
+                setPen(QPen(m_game_window->m_game->m_players[m_game_window->m_player_id].m_color, pen().width()));
+            }
+        }
+        else {
+            QMessageBox warn;
+            warn.setText(result);
+            warn.exec();
+        }
+    }
+}
+
+void BoardVertex::updatecolor() {
+    setBrush(QBrush((m_vertex->owner_id >= 0) ? m_game_window->m_game->m_players[m_vertex->owner_id].m_color : Qt::lightGray));
 }
 
 void BoardEdge::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-    m_game_window->m_game->BuildRoad(m_game_window->m_player_id, *m_edge);
-    setPen(QPen(m_game_window->m_game->m_players[m_game_window->m_player_id].m_color, pen().width()));
-}
-
-void BoardHex::MouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
-{
 
 }
 
-void BoardVertex::MouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
+void BoardHex::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
 {
-    m_game_window->m_game->BuildVillage(m_game_window->m_player_id, *m_vertex);
+    QMessageBox test;
+    test.setText("Face doubleclicked");
+    test.exec();
+}
+
+void BoardVertex::mouseDoubleClickEvent(QGraphicsSceneMouseEvent* event)
+{
+    if(m_vertex->owner_id == -1){
+        QString result;
+        if (m_game_window->m_game->TryBuildVillage(m_game_window->m_player_id, *m_vertex, result)) {
+            QMessageBox confirm;
+            //confirm.setText("Build village here?");
+            QPushButton * conf = confirm.addButton("Yay!", QMessageBox::ActionRole);
+            QPushButton * rej = confirm.addButton(QMessageBox::Abort);
+            confirm.exec();
+            if(confirm.clickedButton() == conf) {
+                m_game_window->m_game->BuildVillage(m_game_window->m_player_id, *m_vertex);
+                setBrush(QBrush(m_game_window->m_game->m_players[m_game_window->m_player_id].m_color));
+            }
+        }
+        else {
+            QMessageBox warn;
+            warn.setText(result);
+            warn.exec();
+        }
+    } else if ((m_vertex->owner_id == m_game_window->m_player_id) && (m_vertex->m_urban == VILLAGE)) {
+        QString result;
+        if (m_game_window->m_game->TryBuildCity(m_game_window->m_player_id, *m_vertex, result)) {
+            QMessageBox confirm;
+            //confirm.setText("Build city here?");
+            QPushButton * conf = confirm.addButton("Yay!", QMessageBox::ActionRole);
+            QPushButton * rej = confirm.addButton(QMessageBox::Abort);
+            confirm.exec();
+            if (confirm.clickedButton() == conf) {
+                m_game_window->m_game->BuildCity(m_game_window->m_player_id, *m_vertex);
+                QRectF newrect = rect();
+                newrect.setTopLeft(1.75*newrect.topLeft());
+                newrect.setBottomRight(1.75*newrect.bottomRight());
+                setRect(newrect);
+                //update(newrect);
+            }
+        }
+        else {
+            QMessageBox warn;
+            warn.setText(result);
+        }\
+    }
 }
 
 void GameBoardView::resizeEvent(QResizeEvent* event)
@@ -188,4 +251,4 @@ void Menu::Init(QApplication *m_app)
 }
 
     
-};
+}

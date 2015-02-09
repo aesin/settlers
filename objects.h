@@ -24,6 +24,7 @@ class Resources{
 public:
     Resources(): m_resources(RESOURCES_NUMBER, 0) {}
     int& operator[] (int x) {return m_resources[x];}
+    const int& operator[] (int x) const {return m_resources[x];}
 private:
     std::vector<int> m_resources;
 };

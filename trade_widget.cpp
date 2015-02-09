@@ -1,6 +1,6 @@
 #include "trade_widget.h"
 namespace settlers {
-ResourceBox::ResourceBox(GameResource res): QWidget(), value(0) {
+ResourceBox::ResourceBox(GameResource res, QWidget * parent): QWidget(parent), value(0) {
   QVBoxLayout * m_layout = new QVBoxLayout(this);
   QPushButton * m_inc = new QPushButton(this);
   QPushButton * m_dec = new QPushButton(this);
@@ -18,6 +18,14 @@ ResourceBox::ResourceBox(GameResource res): QWidget(), value(0) {
   setLayout(m_layout);
 }
 
+void ResourceBox::SetValue(int new_value)
+{
+  if (value != new_value) {
+    value = new_value;
+    ValueChanged(value);
+  }
+}
+
 void ResourceBox::DecreaseValue()
 {
   if (value > 0) {
@@ -30,6 +38,24 @@ void ResourceBox::IncreaseValue()
 {
   value++;
   ValueChanged(value);
+}
+
+ResourcePanel::ResourcePanel(QWidget * parent): QWidget(parent) {
+  QHBoxLayout* m_layout = new QHBoxLayout;
+  for (int res = 0; res < RESOURCES_NUMBER; res++) {
+    ResourceBox* res_box = new ResourceBox(static_cast<GameResource>(res), this);
+    m_res_boxes[res] = res_box;
+    m_layout->addWidget(res_box);
+    QObject::connect(res_box, SIGNAL(ValueChanged(int)), this, SLOT(ChangeValue(static_cast<GameResource>(res), int)));
+  }
+  setLayout(m_layout);
+}
+
+void ResourcePanel::SetRecources(const Resources& new_res)
+{
+  for (int res = 0; res < RESOURCES_NUMBER; res++) {
+    m_res_boxes[res]->SetValue(new_res[res]);
+  }
 }
 
 }

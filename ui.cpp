@@ -110,7 +110,7 @@ void GameWindow::Init()
     m_button->setText("Random button");
     m_button->setSizePolicy(size_policy2);
     m_layout->addWidget(m_button);
-    ResourceBox * m_res_box = new ResourceBox(WOOL);
+    ResourcePanel * m_res_box = new ResourcePanel;
     m_layout->addWidget(m_res_box);
     setLayout(m_layout);
     show();
